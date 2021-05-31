@@ -1,0 +1,5 @@
+module github.com/Sergei39/Cache
+
+go 1.15
+
+require github.com/stretchr/testify v1.7.0
