@@ -8,7 +8,7 @@ import (
 )
 
 func TestPut(t *testing.T) {
-	cache, err := NewCache(3, 4*time.Second)
+	cache, err := NewCache(3, 3000, 4*time.Second)
 	assert.Equal(t, err, nil, "error with create")
 
 	cache.Put(1, "str1")
@@ -16,7 +16,7 @@ func TestPut(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	cache, err := NewCache(3, 4*time.Second)
+	cache, err := NewCache(3, 3000, 4*time.Second)
 	assert.Equal(t, err, nil, "error with create")
 
 	cache.Put(1, "str1")
@@ -30,7 +30,7 @@ func TestGet(t *testing.T) {
 
 func TestSimple(t *testing.T) {
 	size := 3
-	cache, err := NewCache(size, 4*time.Second)
+	cache, err := NewCache(size, 3000, 4*time.Second)
 	assert.Equal(t, err, nil, "error with create")
 
 	cache.Put(1, "str1")
@@ -64,7 +64,7 @@ func TestSimple(t *testing.T) {
 
 func TestTimeSimple(t *testing.T) {
 	lifetime := 4 * time.Second
-	cache, err := NewCache(3, lifetime)
+	cache, err := NewCache(3, 3000, lifetime)
 	assert.Equal(t, err, nil, "error with create")
 
 	cache.Put(1, "str1")
@@ -77,7 +77,7 @@ func TestTimeSimple(t *testing.T) {
 
 func TestTimeHard(t *testing.T) {
 	lifetime := 4 * time.Second
-	cache, err := NewCache(3, lifetime)
+	cache, err := NewCache(3, 3000, lifetime)
 	assert.Equal(t, err, nil, "error with create")
 
 	cache.Put(1, "str1")
@@ -87,4 +87,15 @@ func TestTimeHard(t *testing.T) {
 	<-time.After(lifetime + 2*cache.cleartime)
 
 	assert.Equal(t, 0, cache.values.Len(), "incorrect size")
+}
+
+func TestOwerflowMemory(t *testing.T) {
+	cache, err := NewCache(3, 500, 5)
+	assert.Equal(t, err, nil, "error with create")
+
+	cache.Put(1, "str1")
+	cache.Put(2, "str2")
+	err = cache.Put(3, "str3")
+
+	assert.NotEqual(t, err, nil, "not error owerflow memory")
 }
